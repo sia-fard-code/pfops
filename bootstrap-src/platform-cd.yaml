@@ -12,8 +12,8 @@ spec:
   project: platform
   source:
     path: bootstrap
-    repoURL: ssh://git@bitbucket.corp.zscaler.com:7999/tools/pfops-manifests.git
-    targetRevision: feature/TOOLS-480-automating-argo-cd
+    repoURL: git@github.com:sia-fard-code/demo-manifests.git
+    targetRevision: main
   syncPolicy:
     automated:
       prune: true

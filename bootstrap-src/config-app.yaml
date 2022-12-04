@@ -6,8 +6,8 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: ssh://git@bitbucket.corp.zscaler.com:7999/tools/pfops-config-tools.git
-        revision: feature/TOOLS-782-add-cilium-deployment-in-to-pfops
+        repoURL: git@github.com:sia-fard-code/pfops-config.git
+        revision: main
         directories:
         - path: "*"
   template:
@@ -23,8 +23,8 @@ spec:
         plugin: 
           name: yq
         path: '{{path.basename}}'
-        repoURL: ssh://git@bitbucket.corp.zscaler.com:7999/tools/pfops-config-tools.git
-        targetRevision: feature/TOOLS-782-add-cilium-deployment-in-to-pfops
+        repoURL: git@github.com:sia-fard-code/pfops-config.git
+        targetRevision: main
       syncPolicy:
         automated:
           prune: true
@@ -91,8 +91,8 @@ data:
     git config --global user.email "sghalamifard@zscaker.com"
     git config --global user.name "Siavash"
     cd /workspace/
-    git clone -b feature/TOOLS-480-automating-argo-cd --single-branch ssh://git@bitbucket.corp.zscaler.com:7999/tools/pfops-manifests.git
-    git clone -b feature/TOOLS-480-automating-argo-cd --single-branch ssh://git@bitbucket.corp.zscaler.com:7999/tools/pfops-metadata.git
+    git clone -b main --single-branch git@github.com:sia-fard-code/demo-manifests.git
+    git clone -b main --single-branch git@github.com:sia-fard-code/demo-metadata.git
     
     mkdir -p /var/tmp/cms
     for cm in $(kubectl get cm --all-namespaces -l manual=true,prefix=apps --no-headers -o custom-columns="NS:metadata.namespace,Name:metadata.name" | sed 's#\s\(.*\)\s#,#g' ); do

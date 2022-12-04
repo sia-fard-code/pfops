@@ -35,13 +35,7 @@ WORKDIR /workspace
 COPY manifest-temp /workspace/manifest-temp
 COPY entrypoint.sh /workspace
 COPY entrypoint2.sh /workspace
-COPY test/cm-generator.sh /workspace/cm/
-COPY test/config.yaml /workspace/cm/
-COPY test/configmaps.yml /workspace/cm/
-COPY test/wf-loc* /workspace/cm/wf/
-COPY test/values/ /workspace/cm/values/
 
-RUN chmod +x /workspace/cm/cm-generator.sh
 RUN chmod +x /workspace/entrypoint.sh
 
 ENTRYPOINT ["/bin/sh /workspace/entrypoint.sh"]

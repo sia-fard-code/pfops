@@ -35,8 +35,8 @@ spec:
   project: bootstrap-pfops-prj
   source:
     path: bootstrap-src
-    repoURL: ssh://git@bitbucket.corp.zscaler.com:7999/tools/et-pfops.git
-    targetRevision: feature/TOOLS-782-add-cilium-deployment-in-to-pfops
+    repoURL: git@github.com:sia-fard-code/pfops.git
+    targetRevision: main
   syncPolicy:
     automated:
       prune: true
