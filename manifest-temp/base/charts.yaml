@@ -1,0 +1,40 @@
+#@ load("@ytt:data", "data")
+
+#@ for chart in data.values.app.resources.Sync.charts:
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: #@ data.values.app.cluster + "-" + data.values.app.env +"-helm-" + chart.name
+  namespace: #@ data.values.app.namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: #@ chart.sync_wave
+spec:
+  destination:
+    #@ if data.values.app.override_na == "true":
+      #@ namespace = chart.ns
+    #@ elif data.values.app.default_ns == "true":
+      #@ namespace = data.values.app.cluster + "-" + data.values.app.env
+    #@ else :
+      #@ namespace = data.values.app.cluster + "-" + data.values.app.env + "-" + chart.ns
+    #@ end
+    namespace: #@ namespace
+    server: #@ data.values.app.server
+  project: #@ data.values.app.cluster + "-" + data.values.app.env
+  source:
+    chart: #@ chart.helm.name
+    helm:
+      valueFiles:
+        - values.yaml
+      values: #@ chart.values
+    repoURL: #@ chart.helm.url
+    targetRevision: #@ chart.helm.revision
+  #@ if/end hasattr(chart, "ignoreDifferences"):
+  ignoreDifferences : #@ chart.ignoreDifferences
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    #@ if/end hasattr(chart, "syncOptions"):
+    syncOptions: #@ chart.syncOptions
+#@ end

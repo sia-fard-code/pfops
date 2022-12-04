@@ -1,0 +1,44 @@
+#@ load("@ytt:data", "data")
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  name: #@ data.values.env.cluster + '-pfops-sensor'
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflows
+  - workflowtemplates
+  - cronworkflows
+  - clusterworkflowtemplates
+  verbs:
+  - '*'
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: #@ data.values.env.cluster + '-pfops-sensor'
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+automountServiceAccountToken: true
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  name: #@ data.values.env.cluster + '-pfops-sensor'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: #@ data.values.env.cluster + "-pfops-sensor"
+subjects:
+- kind: ServiceAccount
+  name: #@ data.values.env.cluster + "-pfops-sensor"
+  namespace: #@ data.values.env.cluster + "-" + data.values.env.pfops.env

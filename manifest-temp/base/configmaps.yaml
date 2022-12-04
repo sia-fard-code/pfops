@@ -1,0 +1,27 @@
+#@ load("@ytt:data", "data")
+#@ for hook in dir(data.values.app.resources):
+  #@ for rsc in dir(data.values.app.resources[hook]):
+    #@ if rsc == "configmaps":
+      #@ for configmap in data.values.app.resources[hook][rsc]:
+---
+apiVersion: v1
+data: #@ configmap.data
+kind: ConfigMap
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: #@ configmap.sync_wave
+  name: #@ configmap.name
+
+  #@ if data.values.app.override_na == "true":
+    #@ namespace = configmap.ns
+  #@ elif data.values.app.default_ns == "true":
+    #@ namespace = data.values.app.cluster + "-" + data.values.app.env
+  #@ else :
+    #@ namespace = data.values.app.cluster + "-" + data.values.app.env + "-" + configmap.ns
+  #@ end
+  namespace: #@ namespace
+
+      #@ end
+    #@ end
+  #@ end
+#@ end

@@ -1,0 +1,169 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: 'pfops-config-set'
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: ssh://git@bitbucket.corp.zscaler.com:7999/tools/pfops-config-tools.git
+        revision: feature/TOOLS-782-add-cilium-deployment-in-to-pfops
+        directories:
+        - path: "*"
+  template:
+    metadata:
+      name: '{{path.basename}}-config-files'
+      namespace: argocd
+    spec:
+      destination:
+        namespace: argocd
+        server: https://kubernetes.default.svc
+      project: bootstrap-pfops-prj
+      source:
+        plugin: 
+          name: yq
+        path: '{{path.basename}}'
+        repoURL: ssh://git@bitbucket.corp.zscaler.com:7999/tools/pfops-config-tools.git
+        targetRevision: feature/TOOLS-782-add-cilium-deployment-in-to-pfops
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  name: 'bootstrap-pfops'
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: 'bootstrap-pfops'
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+automountServiceAccountToken: true
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  name: 'bootstrap-pfops'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: 'bootstrap-pfops'
+subjects:
+- kind: ServiceAccount
+  name: 'bootstrap-pfops'
+  namespace: argocd
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: 'pfops-deploy-scripts'
+  namespace: argocd
+data:
+  script.sh: |
+    #! /bin/sh
+    set -e
+    git config --global user.email "sghalamifard@zscaker.com"
+    git config --global user.name "Siavash"
+    cd /workspace/
+    git clone -b feature/TOOLS-480-automating-argo-cd --single-branch ssh://git@bitbucket.corp.zscaler.com:7999/tools/pfops-manifests.git
+    git clone -b feature/TOOLS-480-automating-argo-cd --single-branch ssh://git@bitbucket.corp.zscaler.com:7999/tools/pfops-metadata.git
+    
+    mkdir -p /var/tmp/cms
+    for cm in $(kubectl get cm --all-namespaces -l manual=true,prefix=apps --no-headers -o custom-columns="NS:metadata.namespace,Name:metadata.name" | sed 's#\s\(.*\)\s#,#g' ); do
+        name=$(echo "$cm" | cut -f2 -d,)
+        ns=$(echo "$cm" | cut -f1 -d,)
+        kubectl get cm -n $ns $name -o jsonpath="{.data['config\.yaml']}" > /var/tmp/cms/$name
+        ./entrypoint.sh /var/tmp/cms/$name false
+    done
+
+    for cm in $(kubectl get cm --all-namespaces -l manual=true,prefix=bootstrap --no-headers -o custom-columns="NS:metadata.namespace,Name:metadata.name" | sed 's#\s\(.*\)\s#,#g'); do
+        name=$(echo "$cm" | cut -f2 -d,)
+        ns=$(echo "$cm" |  cut -f1 -d,)
+        kubectl get cm -n $ns $name -o jsonpath="{.data['config\.yaml']}" > /var/tmp/cms/$name
+        ./entrypoint.sh /var/tmp/cms/$name true
+    done
+
+    cp -fr /workspace/manifests/* /workspace/pfops-manifests
+    cp -fr /workspace/metadata/* /workspace/pfops-metadata
+
+    cd /workspace/pfops-manifests
+    git add -A
+    git diff-index --quiet HEAD || git commit -am "TOOLS-741 merged files"
+    git push
+
+    cd /workspace/pfops-metadata
+    git add -A
+    git diff-index --quiet HEAD || git commit -am "TOOLS-741 merged files"
+    git push
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: 'pfops-deploy-manual-trigger'
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/hook: 'PostSync'
+    # argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/sync-options: Replace=true
+spec:
+  template:
+    spec:
+      containers:
+      - name: 'pfops-deploy-manual-trigger'
+        image: harbor.k8s-tools.et.zscaler.com/public/pfops
+        args:
+          - '-c'
+          - /root/script/script.sh
+        command:
+          - /bin/sh
+        env:
+        - name: GIT_SSH_COMMAND
+          value: "ssh -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes"
+        volumeMounts:
+          - mountPath: /root/.ssh
+            name: ssh
+          - mountPath: /root/script
+            name: script
+      volumes:
+        - secret:
+            secretName: argocd-repo-creds-ssh-creds
+            items:
+              - key: sshPrivateKey
+                mode: 0400 
+                path: id_rsa        
+          name: ssh
+        - configMap:
+            name: pfops-deploy-scripts
+            defaultMode: 0744
+          name: script
+      serviceAccount: bootstrap-pfops
+      serviceAccountName: bootstrap-pfops          
+      restartPolicy: Never
+  backoffLimit: 2

@@ -1,0 +1,13 @@
+#@ load("@ytt:data", "data")
+
+apiVersion: argoproj.io/v1alpha1
+kind: EventBus
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  finalizers:
+    - eventbus-controller
+  name: #@ data.values.env.cluster + '-pfops'
+spec:
+  jetstream:
+    version: latest

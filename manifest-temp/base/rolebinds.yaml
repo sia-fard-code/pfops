@@ -1,0 +1,33 @@
+#@ load("@ytt:data", "data")
+
+#@ for hook in dir(data.values.app.resources):
+  #@ for rsc in dir(data.values.app.resources[hook]):
+    #@ if rsc == "rolebinds":
+      #@ for rb in data.values.app.resources[hook][rsc]:
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: #@ rb.kind
+metadata:
+  #@ if rb.kind == "RoleBinding":
+    #@ if data.values.app.override_na == "true":
+      #@ namespace = rb.ns
+    #@ elif data.values.app.default_ns == "true":
+      #@ namespace = data.values.app.cluster + "-" + data.values.app.env
+    #@ else :
+      #@ namespace = data.values.app.cluster + "-" + data.values.app.env + "-" + rb.ns
+    #@ end
+  namespace: #@ namespace
+  #@ end
+  name: #@ rb.name
+  annotations:
+    argocd.argoproj.io/sync-wave: #@ rb.sync_wave
+    #@ if/end hook != "Sync":
+    argocd.argoproj.io/hook: #@ hook
+roleRef: #@ rb.roleRef
+subjects: #@ rb.subjects
+
+      #@ end
+    #@ end
+  #@ end
+#@ end

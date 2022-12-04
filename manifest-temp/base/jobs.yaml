@@ -1,0 +1,50 @@
+#@ load("@ytt:data", "data")
+#@ for hook in dir(data.values.app.resources):
+  #@ for rsc in dir(data.values.app.resources[hook]):
+    #@ if rsc == "jobs":
+      #@ for job in data.values.app.resources[hook][rsc]:
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: #@ job.name + "-" + hook.lower() + '-'
+  #@ if hasattr(job, "ns"):
+    #@ if data.values.app.override_na == "true":
+      #@ namespace = job.ns
+    #@ elif data.values.app.default_ns == "true":
+      #@ namespace = data.values.app.cluster + "-" + data.values.app.env
+    #@ else :
+      #@ namespace = data.values.app.cluster + "-" + data.values.app.env + "-" + job.ns
+    #@ end
+  namespace: #@ namespace
+  #@ end
+  annotations:
+    argocd.argoproj.io/sync-wave: #@ job.sync_wave
+    argocd.argoproj.io/hook: #@ hook
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/sync-options: Replace=true
+spec:
+  template:
+    spec:
+      containers:
+      - name:  #@ job.name + "-" + hook.lower()
+        image: #@ job.image
+        args:
+          - '-c'
+          - #@ job.args
+        command:
+          - #@ job.cmd
+      #@ if hasattr(job, "serviceAccount"):
+      serviceAccount: #@ job.serviceAccount
+      serviceAccountName: #@ job.serviceAccount
+      #@ end
+      #@ if hasattr(job, "imagePullSecrets"):
+      imagePullSecrets: 
+      - name: #@ job.imagePullSecrets
+      #@ end
+      restartPolicy: Never
+  backoffLimit: 2
+      #@ end
+    #@ end
+  #@ end
+#@ end

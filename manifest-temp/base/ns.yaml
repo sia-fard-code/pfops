@@ -1,0 +1,29 @@
+#@ load("@ytt:data", "data")
+
+#@ for hook in dir(data.values.app.resources):
+  #@ for rsc in dir(data.values.app.resources[hook]):
+    #@ if rsc == "ns":
+      #@ for ns in data.values.app.resources[hook][rsc]:
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  #@ if data.values.app.override_na == "true":
+    #@ namespace = ns.name
+  #@ elif data.values.app.default_ns == "true":
+    #@ namespace = data.values.app.cluster + "-" + data.values.app.env
+  #@ else :
+    #@ namespace = data.values.app.cluster + "-" + data.values.app.env + "-" + ns.name
+  #@ end
+  name: #@ namespace
+#!  name: #@ data.values.app.cluster + "-" + data.values.app.env +"-"+ ns.name
+  annotations:
+    argocd.argoproj.io/sync-wave: #@ ns.sync_wave
+    #@ if/end hook != "Sync":
+    argocd.argoproj.io/hook: #@ hook
+
+      #@ end
+    #@ end
+  #@ end
+#@ end

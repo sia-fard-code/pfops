@@ -1,0 +1,48 @@
+FROM golang:1.19.1-buster AS build
+
+ARG YTT_VERSION=v0.44.0
+WORKDIR /go/src/github.com/k14s/ytt
+RUN echo building ytt $YTT_VERSION \
+ && git clone \
+        --branch "${YTT_VERSION}" \
+        https://github.com/vmware-tanzu/carvel-ytt \
+        . \
+ && apt-get update && apt-get install -y --no-install-recommends zip=3.0* \
+ && ./hack/build.sh
+
+
+FROM alpine
+
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=build /go/src/github.com/k14s/ytt/ytt /usr/bin/ytt
+
+RUN apk fix && \
+    apk --no-cache --update add git git-lfs gpg less openssh yq tree && \
+    git lfs install
+
+ENV KUBE_LATEST_VERSION="v1.25.0"
+
+RUN apk add --update ca-certificates \
+ && apk add -t deps \
+ && apk add --update curl \
+ && export ARCH="$(uname -m)" && if [[ ${ARCH} == "x86_64" ]]; then export ARCH="amd64"; elif [[ ${ARCH} == "aarch64" ]]; then export ARCH="arm64"; fi && curl -L https://dl.k8s.io/release/${KUBE_LATEST_VERSION}/bin/linux/${ARCH}/kubectl -o /usr/local/bin/kubectl \
+ && chmod +x /usr/local/bin/kubectl \
+ && apk del --purge deps \
+ && rm /var/cache/apk/*
+
+WORKDIR /workspace
+
+COPY manifest-temp /workspace/manifest-temp
+COPY entrypoint.sh /workspace
+COPY entrypoint2.sh /workspace
+COPY test/cm-generator.sh /workspace/cm/
+COPY test/config.yaml /workspace/cm/
+COPY test/configmaps.yml /workspace/cm/
+COPY test/wf-loc* /workspace/cm/wf/
+COPY test/values/ /workspace/cm/values/
+
+RUN chmod +x /workspace/cm/cm-generator.sh
+RUN chmod +x /workspace/entrypoint.sh
+
+ENTRYPOINT ["/bin/sh /workspace/entrypoint.sh"]
+CMD ["/workspace/cm/config.yaml"]

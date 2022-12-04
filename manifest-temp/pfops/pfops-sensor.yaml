@@ -1,0 +1,47 @@
+#@ load("@ytt:data", "data")
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  finalizers:
+    - sensor-controller
+  name: #@ data.values.env.cluster + '-pfops'
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"   
+spec:
+  eventBusName: #@ data.values.env.cluster + '-pfops'
+  dependencies:
+#@ for wf in data.values.env.workflow:
+#@ for es in wf.wfs:
+    - eventName: #@ data.values.env.cluster + "-" + es.name + "-" + wf.type + "-" + es.prefix + '-pfops-config'
+      eventSourceName: #@ data.values.env.cluster + "-pfops"
+      name: #@ data.values.env.cluster + "-" + es.name + "-" + wf.type + "-" + es.prefix + '-pfops-dep'
+#@ end
+#@ end
+  template:
+    serviceAccountName: #@ data.values.env.cluster + '-pfops-sensor'
+  triggers:
+#@ for wf in data.values.env.workflow:
+  #@ for es in wf.wfs:
+    - template:
+        name: #@ data.values.env.cluster + "-" + es.name + "-" + wf.type + "-" + es.prefix + "-pfops-wf-trigger"
+        conditions: #@ data.values.env.cluster + "-" + es.name + "-" + wf.type + "-" + es.prefix + '-pfops-dep'
+        k8s:
+          operation: create
+          parameters:
+    #@ if hasattr(es,"parameters"):
+      #@ for params in es.parameters:
+        #@ for dest in params.dests:
+              - src:
+                  dependencyName: #@ data.values.env.cluster + "-" + es.name + "-" + wf.type + "-" + es.prefix + '-pfops-dep'
+                  dataKey: #@ params.dataKey
+                  #@ if/end hasattr(params,"value"):
+                  value: #@ params.value
+                dest: #@ dest
+        #@ end
+      #@ end
+    #@ end
+          source:
+            resource: #@ es.wf
+
+  #@ end
+#@ end

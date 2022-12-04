@@ -1,0 +1,59 @@
+#@ load("@ytt:data", "data")
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: #@ data.values.cluster.name
+  namespace: #@ data.values.cluster.namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  description: #@ data.values.cluster.name + " project"
+  destinations:
+  - namespace: '*'
+    server: #@ data.values.cluster.server
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: #@ data.values.cluster.name
+  namespace: #@ data.values.cluster.namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  generators:
+    - git:
+        repoURL: #@ data.values.cluster.repo
+        revision: #@ data.values.cluster.revision
+        files:
+        - path: "./**/cluster.yml"
+  template:
+    metadata:
+      name: '{{path.basenameNormalized}}'
+      namespace: #@ data.values.cluster.namespace
+    spec:
+      destination:
+        namespace: #@ data.values.cluster.namespace
+        server: #@ data.values.cluster.server
+      project: #@ data.values.cluster.name
+      source:
+        path: '{{path.basenameNormalized}}'
+        repoURL: '{{cluster.repo}}'
+        targetRevision: '{{cluster.revision}}'
+        directory:
+          recurse: false
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false

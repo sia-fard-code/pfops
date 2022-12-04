@@ -1,0 +1,14 @@
+#@ load("@ytt:data", "data")
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources: 
+#@ if/end hasattr(data.values.env.init, "sealed_secrets"):
+- sealed_secrets.yaml
+- pfops-eventsrc.yaml
+- pfops-eventbus.yaml
+- pfops-sensor.yaml
+- rbac-eventsrc.yaml
+- rbac-sensor.yaml
+- rbac-workflow.yaml
+namespace: #@ data.values.env.cluster + "-" + data.values.env.pfops.env

@@ -1,0 +1,82 @@
+#@ load("@ytt:data", "data")
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: #@ data.values.env.cluster
+  namespace: #@ data.values.env.namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  description: #@ data.values.env.cluster + " project"
+  destinations:
+  - namespace: '*'
+    server: #@ data.values.env.server
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: #@ data.values.env.cluster +'-pfops-set'
+  namespace: #@ data.values.env.namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  destination:
+      namespace: #@ data.values.env.namespace
+      server: #@ data.values.env.server
+  project: 'pfops'
+  source:
+    path: #@ data.values.env.cluster + "/pfops"
+    repoURL: #@ data.values.env.pfops_repo
+    targetRevision: #@ data.values.env.pfops_revision
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: #@ data.values.env.cluster +'-set'
+  namespace: #@ data.values.env.namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  generators:
+    - git:
+        repoURL: #@ data.values.env.repo
+        revision: #@ data.values.env.revision
+        files:
+        - path: #@ data.values.env.cluster + "/**/env.yml"
+  template:
+    metadata:
+      name: '{{path[0]}}-{{path.basenameNormalized}}'
+      namespace: #@ data.values.env.namespace
+    spec:
+      destination:
+        namespace: #@ data.values.env.namespace
+        server: #@ data.values.env.server
+      project: '{{path[0]}}'
+      source:
+        path: '{{path}}'
+        repoURL: '{{env.repo}}'
+        targetRevision: '{{env.revision}}'
+        directory:
+          recurse: false
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false

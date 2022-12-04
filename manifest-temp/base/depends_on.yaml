@@ -1,0 +1,75 @@
+#@ load("@ytt:data", "data")
+#@ def app_name(dep):
+  #@ x = ['app','wait']
+  #@ cluster = ''
+  #@ env = ''
+  #@ apps = []
+  #@ if hasattr(dep, "cluster") :
+    #@ cluster = dep.cluster
+  #@ else:
+    #@ cluster = data.values.app.cluster
+  #@ end
+  #@ if hasattr(dep, "env") :
+    #@ env = dep.env
+  #@ else:
+    #@ env = data.values.app.env
+  #@ end
+  #@ if hasattr(dep, "apps") :
+    #@ for app in dep.apps:
+      #@ x.append(cluster + '-' + env + '-app-' + app)
+    #@ end
+  #@ else:
+    #@ x.append(cluster + '-' + env)
+  #@ end
+  #@ return x
+#@ end
+
+#@ for hook in dir(data.values.app.resources):
+  #@ for rsc in dir(data.values.app.resources[hook]):
+    #@ if rsc == "depends_on":
+      #@ for dep in data.values.app.resources[hook][rsc]:
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: #@ 'depends-on-' + "-".join(dep.apps) + '-'
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: #@ dep.sync_wave
+    argocd.argoproj.io/hook: #@ hook
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/sync-options: Replace=true
+spec:
+  template:
+    spec:
+      containers:
+        - args: #@ app_name(dep)
+          image: 348440474813.dkr.ecr.us-west-2.amazonaws.com/argo-harbor/argocd:2.5.2
+          name: #@ 'depends-on-' + "-".join(dep.apps)
+          imagePullPolicy: Always
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /root/.config/argocd
+              name: argocd-cnf
+          resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      schedulerName: default-scheduler
+      serviceAccount: argocd-cli
+      serviceAccountName: argocd-cli
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - configMap:
+            defaultMode: 384
+            name: argocd-cli
+          name: argocd-cnf
+  backoffLimit: 6
+  completionMode: NonIndexed
+  completions: 1
+  parallelism: 1
+  suspend: false
+      #@ end
+    #@ end
+  #@ end
+#@ end

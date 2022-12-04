@@ -1,0 +1,76 @@
+#@ load("@ytt:data", "data")
+#@ def service_ports(wfs):
+  #@ x = []
+  #@ for wf in wfs:
+    #@ if wf.type == "bitbucketserver" or wf.type == "webhook":  
+      #@ for es in wf.wfs:
+      #@   x.append({"port": es.port, "targetPort": es.targetPort})
+      #@ end
+    #@ end
+  #@ end
+  #@ return x
+#@ end
+
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: #@ data.values.env.cluster + '-pfops'
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  eventBusName: #@ data.values.env.cluster + '-pfops'
+  service:
+    ports: #@ service_ports(data.values.env.workflow)
+#@ for wf in data.values.env.workflow:
+  #@ if wf.type == "resource":  
+  resource:
+    #@ for es in wf.wfs:
+    #@yaml/text-templated-strings
+    (@= data.values.env.cluster + "-" + es.name + "-" + wf.type + "-" + es.prefix @)-pfops-config:
+      eventTypes:
+        - UPDATE
+        - ADD
+      #@ if/end hasattr(es, "filter"):
+      filter: #@ es.filter
+      group: ''
+      namespace: #@ data.values.env.cluster + "-" + data.values.env.pfops.env
+      resource: #@ es.resource
+      version: v1
+    #@ end
+  #@ elif wf.type == "webhook": 
+  webhook:
+    #@ for es in wf.wfs:
+    #@yaml/text-templated-strings
+    (@= data.values.env.cluster + "-" + es.name + "-" + wf.type @)-pfops-config:
+      port: "12000"
+      endpoint: /example
+      method: POST
+    #@ end
+  #@ elif wf.type == "bitbucketserver": 
+  bitbucketserver:
+    #@ for es in wf.wfs:
+    #@yaml/text-templated-strings
+    (@= data.values.env.cluster + "-" + es.name + "-" + wf.type @)-pfops-config:
+      accessToken:
+        key: token
+        name: bitbucketserver-access
+      bitbucketserverBaseURL: https://bitbucket.k8s-tools.et.zscaler.com/rest
+      deleteHookOnFinish: true
+      events:
+      - repo:refs_changed
+      repositories:
+      - projectKey: GOS
+        repositorySlug: test-app
+      webhook:
+        endpoint: /push
+        method: POST
+        port: "12000"
+        url: https://argo-wh.k8s-tools.et.zscaler.com
+      webhookSecret:
+        key: secret
+        name: bitbucketserver-access
+    #@ end
+  #@ end
+#@ end
+  template:
+    serviceAccountName: #@ data.values.env.cluster + "-pfops-es"

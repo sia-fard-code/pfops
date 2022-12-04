@@ -1,0 +1,59 @@
+#@ load("@ytt:data", "data")
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: #@ data.values.app.cluster + "-" + data.values.app.env
+  namespace: #@ data.values.app.namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  description: #@ data.values.app.cluster + "-" + data.values.app.env + " project"
+  destinations:
+  - namespace: '*'
+    server: #@ data.values.app.server
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: #@ data.values.app.cluster + "-" + data.values.app.env +"-app-set"
+  namespace: #@ data.values.app.namespace
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  generators:
+    - git:
+        repoURL: #@ data.values.app.repo
+        revision: #@ data.values.app.revision
+        files:
+        - path: #@ data.values.app.cluster + "/" + data.values.app.env + "/apps/**/app.yml"
+  template:
+    metadata:
+      name: '{{path[0]}}-{{path[1]}}-app-{{app.name}}'
+      namespace: #@ data.values.app.namespace
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{app.sync_wave}}'
+    spec:
+      destination:
+        namespace: '{{path[0]}}-{{path[1]}}-{{app.name}}'
+        server: #@ data.values.app.server
+      project: #@ data.values.app.cluster + "-" + data.values.app.env
+      source:
+        path: '{{path[0]}}/{{path[1]}}/apps/{{app.name}}'
+        repoURL: '{{app.repo}}'
+        targetRevision: '{{app.revision}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

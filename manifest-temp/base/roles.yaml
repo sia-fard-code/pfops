@@ -1,0 +1,32 @@
+#@ load("@ytt:data", "data")
+
+#@ for hook in dir(data.values.app.resources):
+  #@ for rsc in dir(data.values.app.resources[hook]):
+    #@ if rsc == "roles":
+      #@ for r in data.values.app.resources[hook][rsc]:
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: #@ r.kind
+metadata:
+  #@ if r.kind == "Role":
+    #@ if data.values.app.override_na == "true":
+      #@ namespace = r.ns
+    #@ elif data.values.app.default_ns == "true":
+      #@ namespace = data.values.app.cluster + "-" + data.values.app.env
+    #@ else :
+      #@ namespace = data.values.app.cluster + "-" + data.values.app.env + "-" + r.ns
+    #@ end
+  namespace: #@ namespace
+  #@ end
+  name: #@ r.name
+  annotations:
+    argocd.argoproj.io/sync-wave: #@ r.sync_wave
+    #@ if/end hook != "Sync":
+    argocd.argoproj.io/hook: #@ hook
+rules: #@ r.rules
+
+      #@ end
+    #@ end
+  #@ end
+#@ end
