@@ -137,7 +137,7 @@ spec:
     spec:
       containers:
       - name: 'pfops-deploy-manual-trigger'
-        image: harbor.k8s-tools.et.zscaler.com/public/pfops
+        image: siavashghf2000/pfops
         args:
           - '-c'
           - /root/script/script.sh
