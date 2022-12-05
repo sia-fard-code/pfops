@@ -44,7 +44,7 @@ spec:
     spec:
       containers:
         - args: #@ app_name(dep)
-          image: 348440474813.dkr.ecr.us-west-2.amazonaws.com/argo-harbor/argocd:2.5.2
+          image: siavashghf2000/argocd
           name: #@ 'depends-on-' + "-".join(dep.apps)
           imagePullPolicy: Always
           terminationMessagePath: /dev/termination-log
