@@ -109,15 +109,15 @@ data:
         ./entrypoint.sh /var/tmp/cms/$name true
     done
 
-    cp -fr /workspace/manifests/* /workspace/pfops-manifests
-    cp -fr /workspace/metadata/* /workspace/pfops-metadata
+    cp -fr /workspace/manifests/* /workspace/demo-manifests
+    cp -fr /workspace/metadata/* /workspace/demo-metadata
 
-    cd /workspace/pfops-manifests
+    cd /workspace/demo-manifests
     git add -A
     git diff-index --quiet HEAD || git commit -am "TOOLS-741 merged files"
     git push
 
-    cd /workspace/pfops-metadata
+    cd /workspace/demo-metadata
     git add -A
     git diff-index --quiet HEAD || git commit -am "TOOLS-741 merged files"
     git push
