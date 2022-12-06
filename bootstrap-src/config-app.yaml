@@ -125,7 +125,7 @@ data:
 
 apiVersion: v1
 data:
-  .dockerconfigjson: eyJhdXRocyI6eyJodHRwczovL2luZGV4LmRvY2tlci5pby92MSI6eyJ1c2VybmFtZSI6InNpYXZhc2hnaGYyMDAwIiwicGFzc3dvcmQiOiJzaWExMzU3OSIsImVtYWlsIjoic2lhLmdmYXJkQGdtYWlsLmNvbSIsImF1dGgiOiJjMmxoZG1GemFHZG9aakl3TURBNmMybGhNVE0xTnprPSJ9fX0=
+  .dockerconfigjson: eyJhdXRocyI6eyJpbmRleC5kb2NrZXIuaW8vdjEvIjp7InVzZXJuYW1lIjoic2lhdmFzaGdoZjIwMDAiLCJwYXNzd29yZCI6InNpYTEzNTc5In19fQ==
 kind: Secret
 metadata:
   name: regcred
