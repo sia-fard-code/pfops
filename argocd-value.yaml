@@ -1,0 +1,1004 @@
+apiVersionOverrides:
+  autoscaling: ''
+  certmanager: ''
+  cloudgoogle: ''
+  ingress: ''
+  pdb: ''
+applicationSet:
+  affinity: {}
+  args:
+    debug: false
+    dryRun: false
+    enableLeaderElection: false
+    metricsAddr: ':8080'
+    policy: sync
+    probeBindAddr: ':8081'
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  enabled: true
+  extraArgs: []
+  extraContainers: []
+  extraEnv: []
+  extraEnvFrom: []
+  extraVolumeMounts: []
+  extraVolumes: []
+  image:
+    imagePullPolicy: ''
+    repository: ''
+    tag: ''
+  imagePullSecrets: []
+  livenessProbe:
+    enabled: false
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  logFormat: ''
+  logLevel: ''
+  metrics:
+    enabled: false
+    service:
+      annotations: {}
+      labels: {}
+      portName: http-metrics
+      servicePort: 8085
+    serviceMonitor:
+      additionalLabels: {}
+      annotations: {}
+      enabled: false
+      interval: 30s
+      metricRelabelings: []
+      namespace: ''
+      relabelings: []
+      scheme: ''
+      selector: {}
+      tlsConfig: {}
+  name: applicationset-controller
+  nodeSelector: {}
+  pdb:
+    annotations: {}
+    enabled: false
+    labels: {}
+    maxUnavailable: ''
+    minAvailable: ''
+  podAnnotations: {}
+  podLabels: {}
+  priorityClassName: ''
+  readinessProbe:
+    enabled: false
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  replicaCount: 1
+  resources: {}
+  service:
+    annotations: {}
+    labels: {}
+    port: 7000
+    portName: webhook
+  serviceAccount:
+    annotations: {}
+    create: true
+    labels: {}
+    name: ''
+  tolerations: []
+  webhook:
+    ingress:
+      annotations: {}
+      enabled: false
+      extraPaths: []
+      hosts: []
+      ingressClassName: ''
+      labels: {}
+      pathType: Prefix
+      paths:
+        - /api/webhook
+      tls: []
+configs:
+  clusterCredentials: []
+  cm:
+    admin.enabled: true
+    annotations: {}
+    application.instanceLabelKey: argocd.argoproj.io/instance
+    create: true
+    exec.enabled: false
+    server.rbac.log.enforce.enable: false
+    timeout.hard.reconciliation: 0
+    timeout.reconciliation: 180s
+    url: ''
+  credentialTemplates:
+    ssh-creds:
+      sshPrivateKey: |
+        -----BEGIN OPENSSH PRIVATE KEY-----
+        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
+        UGBw==
+        -----END OPENSSH PRIVATE KEY-----
+      url: git@github.com:sia-fard-code
+  credentialTemplatesAnnotations: {}
+  gpg:
+    annotations: {}
+    keys: {}
+  knownHosts:
+    data:
+      ssh_known_hosts: >
+        bitbucket.org ssh-rsa
+        AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
+
+        github.com ecdsa-sha2-nistp256
+        AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=
+
+        github.com ssh-ed25519
+        AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
+
+        github.com ssh-rsa
+        AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+
+        gitlab.com ecdsa-sha2-nistp256
+        AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=
+
+        gitlab.com ssh-ed25519
+        AAAAC3NzaC1lZDI1NTE5AAAAIAfuCHKVTjquxvt6CM6tdG4SLp1Btn/nOeHHE5UOzRdf
+
+        gitlab.com ssh-rsa
+        AAAAB3NzaC1yc2EAAAADAQABAAABAQCsj2bNKTBSpIYDEGk9KxsGh3mySTRgMtXL583qmBpzeQ+jqCMRgBqB98u3z++J1sKlXHWfM9dyhSevkMwSbhoR8XIq/U0tCNyokEi/ueaBMCvbcTHhO7FcwzY92WK4Yt0aGROY5qX2UKSeOvuP4D6TPqKF1onrSzH9bx9XUf2lEdWT/ia1NEKjunUqu1xOB/StKDHMoX4/OKyIzuS0q/T1zOATthvasJFoPrAjkohTyaDUz2LN5JoH839hViyEG82yB+MjcFV5MU3N1l1QL3cVUCh93xSaua1N85qivl+siMkPGbO5xR/En4iEY6K2XPASUEMaieWVNTRCtJ4S8H+9
+
+        ssh.dev.azure.com ssh-rsa
+        AAAAB3NzaC1yc2EAAAADAQABAAABAQC7Hr1oTWqNqOlzGJOfGJ4NakVyIzf1rXYd4d7wo6jBlkLvCA4odBlL0mDUyZ0/QUfTTqeu+tm22gOsv+VrVTMk6vwRU75gY/y9ut5Mb3bR5BV58dKXyq9A9UeB5Cakehn5Zgm6x1mKoVyf+FFn26iYqXJRgzIZZcZ5V6hrE0Qg39kZm4az48o0AUbf6Sp4SLdvnuMa2sVNwHBboS7EJkm57XQPVU3/QpyNLHbWDdzwtrlS+ez30S3AdYhLKEOxAG8weOnyrtLJAUen9mTkol8oII1edf7mWWbWVf0nBmly21+nZcmCTISQBtdcyPaEno7fFQMDD26/s0lfKob4Kw8H
+
+        vs-ssh.visualstudio.com ssh-rsa
+        AAAAB3NzaC1yc2EAAAADAQABAAABAQC7Hr1oTWqNqOlzGJOfGJ4NakVyIzf1rXYd4d7wo6jBlkLvCA4odBlL0mDUyZ0/QUfTTqeu+tm22gOsv+VrVTMk6vwRU75gY/y9ut5Mb3bR5BV58dKXyq9A9UeB5Cakehn5Zgm6x1mKoVyf+FFn26iYqXJRgzIZZcZ5V6hrE0Qg39kZm4az48o0AUbf6Sp4SLdvnuMa2sVNwHBboS7EJkm57XQPVU3/QpyNLHbWDdzwtrlS+ez30S3AdYhLKEOxAG8weOnyrtLJAUen9mTkol8oII1edf7mWWbWVf0nBmly21+nZcmCTISQBtdcyPaEno7fFQMDD26/s0lfKob4Kw8H
+  knownHostsAnnotations: {}
+  params:
+    annotations: {}
+    controller.operation.processors: 10
+    controller.repo.server.timeout.seconds: 60
+    controller.self.heal.timeout.seconds: 5
+    controller.status.processors: 20
+    otlp.address: ''
+    reposerver.parallelism.limit: 0
+    server.basehref: /
+    server.disable.auth: false
+    server.enable.gzip: false
+    server.insecure: false
+    server.rootpath: ''
+    server.staticassets: /shared/app
+    server.x.frame.options: sameorigin
+    timeout.reconciliation: 15
+  rbac:
+    annotations: {}
+    create: true
+    policy.csv: ''
+    policy.default: ''
+    scopes: '[groups]'
+  repositories:
+    - name: argo-cd
+      type: helm
+      url: https://argoproj.github.io/argo-helm
+  repositoriesAnnotations: {}
+  secret:
+    annotations: {}
+    argocdServerAdminPassword: $2a$10$.nJQLO5JeozVUnpifcT2ZOEE1mHbcsx0EypUxk0KWLJM/Ld0L8Ekm
+    argocdServerAdminPasswordMtime: ''
+    bitbucketServerSecret: ''
+    bitbucketUUID: ''
+    createSecret: true
+    extra: {}
+    githubSecret: ''
+    gitlabSecret: ''
+    gogsSecret: ''
+  styles: ''
+  tlsCerts: {}
+  tlsCertsAnnotations: {}
+controller:
+  affinity: {}
+  args: {}
+  clusterAdminAccess:
+    enabled: true
+  clusterRoleRules:
+    enabled: false
+    rules: []
+  containerPort: 8082
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  env: []
+  envFrom: []
+  extraArgs: []
+  extraContainers: []
+  image:
+    imagePullPolicy: ''
+    repository: ''
+    tag: ''
+  imagePullSecrets: []
+  initContainers: []
+  metrics:
+    applicationLabels:
+      enabled: false
+      labels: []
+    enabled: false
+    rules:
+      enabled: false
+      spec: []
+    service:
+      annotations: {}
+      labels: {}
+      portName: http-metrics
+      servicePort: 8082
+    serviceMonitor:
+      additionalLabels: {}
+      annotations: {}
+      enabled: false
+      interval: 30s
+      metricRelabelings: []
+      namespace: ''
+      relabelings: []
+      scheme: ''
+      selector: {}
+      tlsConfig: {}
+  name: application-controller
+  nodeSelector: {}
+  pdb:
+    annotations: {}
+    enabled: false
+    labels: {}
+    maxUnavailable: ''
+    minAvailable: ''
+  podAnnotations: {}
+  podLabels: {}
+  priorityClassName: ''
+  readinessProbe:
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  replicas: 1
+  resources: {}
+  serviceAccount:
+    annotations: {}
+    automountServiceAccountToken: true
+    create: true
+    labels: {}
+    name: argocd-application-controller
+  tolerations: []
+  topologySpreadConstraints: []
+  volumeMounts: []
+  volumes: []
+  logLevel: debug
+crds:
+  annotations: {}
+  install: true
+  keep: true
+createAggregateRoles: false
+dex:
+  affinity: {}
+  certificateSecret:
+    annotations: {}
+    ca: ''
+    crt: ''
+    enabled: false
+    key: ''
+    labels: {}
+  containerPortGrpc: 5557
+  containerPortHttp: 5556
+  containerPortMetrics: 5558
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  enabled: false
+  env: []
+  envFrom: []
+  extraArgs: []
+  extraContainers: []
+  image:
+    imagePullPolicy: ''
+    repository: ghcr.io/dexidp/dex
+    tag: v2.35.3
+  imagePullSecrets: []
+  initContainers: []
+  initImage:
+    imagePullPolicy: ''
+    repository: ''
+    tag: ''
+  livenessProbe:
+    enabled: false
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  metrics:
+    enabled: false
+    service:
+      annotations: {}
+      labels: {}
+      portName: http-metrics
+    serviceMonitor:
+      additionalLabels: {}
+      annotations: {}
+      enabled: false
+      interval: 30s
+      metricRelabelings: []
+      namespace: ''
+      relabelings: []
+      scheme: ''
+      selector: {}
+      tlsConfig: {}
+  name: dex-server
+  nodeSelector: {}
+  pdb:
+    annotations: {}
+    enabled: false
+    labels: {}
+    maxUnavailable: ''
+    minAvailable: ''
+  podAnnotations: {}
+  podLabels: {}
+  priorityClassName: ''
+  readinessProbe:
+    enabled: false
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  resources: {}
+  serviceAccount:
+    annotations: {}
+    automountServiceAccountToken: true
+    create: true
+    name: argocd-dex-server
+  servicePortGrpc: 5557
+  servicePortGrpcName: grpc
+  servicePortHttp: 5556
+  servicePortHttpName: http
+  servicePortMetrics: 5558
+  tolerations: []
+  topologySpreadConstraints: []
+  volumeMounts: []
+  volumes: []
+externalRedis:
+  existingSecret: ''
+  host: ''
+  password: ''
+  port: 6379
+  secretAnnotations: {}
+  username: ''
+extraObjects: []
+fullnameOverride: ''
+global:
+  additionalLabels: {}
+  hostAliases: []
+  image:
+    imagePullPolicy: IfNotPresent
+    repository: quay.io/argoproj/argocd
+    tag: ''
+  imagePullSecrets: []
+  logging:
+    format: text
+    level: info
+  networkPolicy:
+    create: false
+    defaultDenyIngress: false
+  podAnnotations: {}
+  podLabels: {}
+  revisionHistoryLimit: 3
+  securityContext: {}
+  cattle:
+    systemProjectId: p-55mmx
+kubeVersionOverride: ''
+nameOverride: argocd
+notifications:
+  affinity: {}
+  argocdUrl: null
+  bots:
+    slack:
+      affinity: {}
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      enabled: false
+      image:
+        imagePullPolicy: ''
+        repository: ''
+        tag: ''
+      imagePullSecrets: []
+      nodeSelector: {}
+      pdb:
+        annotations: {}
+        enabled: false
+        labels: {}
+        maxUnavailable: ''
+        minAvailable: ''
+      resources: {}
+      service:
+        annotations: {}
+        port: 80
+        type: LoadBalancer
+      serviceAccount:
+        annotations: {}
+        create: true
+        name: argocd-notifications-bot
+      tolerations: []
+  cm:
+    create: true
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  context: {}
+  enabled: true
+  extraArgs: []
+  extraEnv: []
+  extraEnvFrom: []
+  extraVolumeMounts: []
+  extraVolumes: []
+  image:
+    imagePullPolicy: ''
+    repository: ''
+    tag: ''
+  imagePullSecrets: []
+  logFormat: ''
+  logLevel: debug
+  metrics:
+    enabled: false
+    port: 9001
+    service:
+      annotations: {}
+      labels: {}
+      portName: http-metrics
+    serviceMonitor:
+      additionalLabels: {}
+      annotations: {}
+      enabled: false
+      scheme: ''
+      selector: {}
+      tlsConfig: {}
+  name: notifications-controller
+  nodeSelector: {}
+  notifiers: {}
+  pdb:
+    annotations: {}
+    enabled: false
+    labels: {}
+    maxUnavailable: ''
+    minAvailable: ''
+  podAnnotations: {}
+  podLabels: {}
+  priorityClassName: ''
+  resources: {}
+  secret:
+    annotations: {}
+    create: true
+    items: {}
+  serviceAccount:
+    annotations: {}
+    create: true
+    labels: {}
+    name: argocd-notifications-controller
+  subscriptions: []
+  templates: {}
+  tolerations: []
+  triggers: {}
+openshift:
+  enabled: false
+redis:
+  affinity: {}
+  containerPort: 6379
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  enabled: true
+  env: []
+  envFrom: []
+  extraArgs: []
+  extraContainers: []
+  image:
+    imagePullPolicy: IfNotPresent
+    repository: public.ecr.aws/docker/library/redis
+    tag: 7.0.5-alpine
+  imagePullSecrets: []
+  initContainers: []
+  metrics:
+    containerPort: 9121
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    enabled: false
+    image:
+      imagePullPolicy: IfNotPresent
+      repository: public.ecr.aws/bitnami/redis-exporter
+      tag: 1.26.0-debian-10-r2
+    resources: {}
+    service:
+      annotations: {}
+      clusterIP: None
+      labels: {}
+      portName: http-metrics
+      servicePort: 9121
+      type: ClusterIP
+    serviceMonitor:
+      additionalLabels: {}
+      annotations: {}
+      enabled: false
+      interval: 30s
+      metricRelabelings: []
+      namespace: ''
+      relabelings: []
+      scheme: ''
+      selector: {}
+      tlsConfig: {}
+  name: redis
+  nodeSelector: {}
+  pdb:
+    annotations: {}
+    enabled: false
+    labels: {}
+    maxUnavailable: ''
+    minAvailable: ''
+  podAnnotations: {}
+  podLabels: {}
+  priorityClassName: ''
+  resources: {}
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 999
+    seccompProfile:
+      type: RuntimeDefault
+  service:
+    annotations: {}
+    labels: {}
+  serviceAccount:
+    annotations: {}
+    automountServiceAccountToken: false
+    create: false
+    name: ''
+  servicePort: 6379
+  tolerations: []
+  topologySpreadConstraints: []
+  volumeMounts: []
+  volumes: []
+redis-ha:
+  enabled: false
+  exporter:
+    enabled: true
+  haproxy:
+    enabled: true
+    metrics:
+      enabled: true
+  image:
+    tag: 7.0.5-alpine
+  persistentVolume:
+    enabled: false
+  redis:
+    config:
+      save: '""'
+    masterGroupName: argocd
+  topologySpreadConstraints:
+    enabled: false
+    maxSkew: ''
+    topologyKey: ''
+    whenUnsatisfiable: ''
+repoServer:
+  affinity: {}
+  autoscaling:
+    behavior: {}
+    enabled: true
+    maxReplicas: 5
+    minReplicas: 1
+    targetCPUUtilizationPercentage: 50
+    targetMemoryUtilizationPercentage: 50
+  clusterAdminAccess:
+    enabled: false
+  clusterRoleRules:
+    enabled: false
+    rules: []
+  containerPort: 8081
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  env: []
+  envFrom: []
+  extraArgs: []
+  extraContainers:
+    - command:
+        - /var/run/argocd/argocd-cmp-server
+      image: siavashghf2000/pfops
+      name: pfops-cm
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+      volumeMounts:
+        - mountPath: /var/run/argocd
+          name: var-files
+        - mountPath: /home/argocd/cmp-server/plugins
+          name: plugins
+        - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+          name: pfops-cm-plugin
+          subPath: plugin.yaml
+        - mountPath: /tmp
+          name: cmp-tmp
+  image:
+    imagePullPolicy: ''
+    repository: ''
+    tag: ''
+  imagePullSecrets: []
+  initContainers:
+    - args:
+        - cp /usr/bin/yq /custom-tools/yq
+      command:
+        - sh
+        - '-c'
+      image: mikefarah/yq
+      name: download-yq-tools
+      volumeMounts:
+        - mountPath: /custom-tools
+          name: custom-tools
+    - args:
+        - cp /usr/bin/ytt /custom-tools/ytt
+      command:
+        - sh
+        - '-c'
+      image: gerritk/ytt
+      name: download-ytt-tools
+      volumeMounts:
+        - mountPath: /custom-tools
+          name: custom-tools
+  livenessProbe:
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  metrics:
+    enabled: false
+    service:
+      annotations: {}
+      labels: {}
+      portName: http-metrics
+      servicePort: 8084
+    serviceMonitor:
+      additionalLabels: {}
+      annotations: {}
+      enabled: false
+      interval: 30s
+      metricRelabelings: []
+      namespace: ''
+      relabelings: []
+      scheme: ''
+      selector: {}
+      tlsConfig: {}
+  name: repo-server
+  nodeSelector: {}
+  pdb:
+    annotations: {}
+    enabled: false
+    labels: {}
+    maxUnavailable: ''
+    minAvailable: ''
+  podAnnotations: {}
+  podLabels: {}
+  priorityClassName: ''
+  rbac: []
+  readinessProbe:
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  replicas: 1
+  resources: {}
+  service:
+    annotations: {}
+    labels: {}
+    port: 8081
+    portName: https-repo-server
+  serviceAccount:
+    annotations: {}
+    automountServiceAccountToken: true
+    create: true
+    labels: {}
+    name: ''
+  tolerations: []
+  topologySpreadConstraints: []
+  volumeMounts:
+    - mountPath: /usr/local/bin/yq
+      name: custom-tools
+      subPath: yq
+    - mountPath: /usr/local/bin/ytt
+      name: custom-tools
+      subPath: ytt
+  volumes:
+    - configMap:
+        name: pfops-cm-plugin
+      name: pfops-cm-plugin
+    - emptyDir: {}
+      name: cmp-tmp
+    - emptyDir: {}
+      name: custom-tools
+  logLevel: debug
+server:
+  GKEbackendConfig:
+    enabled: false
+    spec: {}
+  GKEfrontendConfig:
+    enabled: false
+    spec: {}
+  GKEmanagedCertificate:
+    domains:
+      - argocd.example.com
+    enabled: false
+  affinity: {}
+  autoscaling:
+    behavior: {}
+    enabled: true
+    maxReplicas: 5
+    minReplicas: 1
+    targetCPUUtilizationPercentage: 50
+    targetMemoryUtilizationPercentage: 50
+  certificate:
+    additionalHosts: []
+    domain: argocd.example.com
+    duration: ''
+    enabled: false
+    issuer:
+      group: ''
+      kind: ''
+      name: ''
+    privateKey:
+      algorithm: RSA
+      encoding: PKCS1
+      rotationPolicy: Never
+      size: 2048
+    renewBefore: ''
+    secretName: argocd-server-tls
+  certificateSecret:
+    annotations: {}
+    crt: ''
+    enabled: false
+    key: ''
+    labels: {}
+  clusterAdminAccess:
+    enabled: true
+  containerPort: 8080
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  env: []
+  envFrom: []
+  extensions:
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    enabled: false
+    image:
+      imagePullPolicy: IfNotPresent
+      repository: ghcr.io/argoproj-labs/argocd-extensions
+      tag: v0.1.0
+    resources: {}
+  extraArgs:
+    - '--insecure'
+  extraContainers: []
+  image:
+    imagePullPolicy: ''
+    repository: ''
+    tag: ''
+  imagePullSecrets: []
+  ingress:
+    annotations: {}
+    enabled: true
+    extraPaths: []
+    hosts:
+      - argo-cd.k8s-tools.et.zscaler.com
+    https: false
+    ingressClassName: internal-traefik
+    labels: {}
+    pathType: Prefix
+    paths:
+      - /
+    tls: []
+  ingressGrpc:
+    annotations: {}
+    awsALB:
+      backendProtocolVersion: HTTP2
+      serviceType: NodePort
+    enabled: false
+    extraPaths: []
+    hosts: []
+    https: false
+    ingressClassName: ''
+    isAWSALB: false
+    labels: {}
+    pathType: Prefix
+    paths:
+      - /
+    tls: []
+  initContainers: []
+  lifecycle: {}
+  livenessProbe:
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  metrics:
+    enabled: false
+    service:
+      annotations: {}
+      labels: {}
+      portName: http-metrics
+      servicePort: 8083
+    serviceMonitor:
+      additionalLabels: {}
+      annotations: {}
+      enabled: false
+      interval: 30s
+      metricRelabelings: []
+      namespace: ''
+      relabelings: []
+      scheme: ''
+      selector: {}
+      tlsConfig: {}
+  name: server
+  nodeSelector: {}
+  pdb:
+    annotations: {}
+    enabled: false
+    labels: {}
+    maxUnavailable: ''
+    minAvailable: ''
+  podAnnotations: {}
+  podLabels: {}
+  priorityClassName: ''
+  readinessProbe:
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  replicas: 1
+  resources: {}
+  route:
+    annotations: {}
+    enabled: false
+    hostname: ''
+    termination_policy: None
+    termination_type: passthrough
+  service:
+    annotations: {}
+    externalIPs: []
+    externalTrafficPolicy: ''
+    labels: {}
+    loadBalancerIP: ''
+    loadBalancerSourceRanges: []
+    namedTargetPort: true
+    nodePortHttp: 30080
+    nodePortHttps: 30443
+    servicePortHttp: 80
+    servicePortHttpName: http
+    servicePortHttps: 443
+    servicePortHttpsName: https
+    sessionAffinity: ''
+    type: ClusterIP
+  serviceAccount:
+    annotations: {}
+    automountServiceAccountToken: true
+    create: true
+    labels: {}
+    name: argocd-server
+  tolerations: []
+  topologySpreadConstraints: []
+  volumeMounts: []
+  volumes: []
+  config:
+    configManagementPlugins: |
+      - name: yq
+        generate:
+          command: ["/bin/sh"]
+          args: ['cm-generator.sh']    
+  logLevel: debug
