@@ -894,9 +894,9 @@ server:
     enabled: true
     extraPaths: []
     hosts:
-      - argo-cd.k8s-tools.et.zscaler.com
+      - argo-cd.localhost
     https: false
-    ingressClassName: internal-traefik
+#    ingressClassName: internal-traefik
     labels: {}
     pathType: Prefix
     paths:

@@ -24,3 +24,12 @@ data:
         find:
           command: [sh, -c, find . -name cm-generator.sh]
 
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pfops-reg
+  namespace: argocd
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: >-
+    eyJhdXRocyI6eyJpbmRleC5kb2NrZXIuaW8vdjEvIjp7InVzZXJuYW1lIjoic2lhdmFzaGdoZjIwMDAiLCJwYXNzd29yZCI6InNpYTEzNTc5In19fQ==
