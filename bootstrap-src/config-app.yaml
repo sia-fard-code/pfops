@@ -99,14 +99,14 @@ data:
         name=$(echo "$cm" | cut -f2 -d,)
         ns=$(echo "$cm" | cut -f1 -d,)
         kubectl get cm -n $ns $name -o jsonpath="{.data['config\.yaml']}" > /var/tmp/cms/$name
-        ./entrypoint.sh /var/tmp/cms/$name false
+        /workspace/entrypoint.sh /var/tmp/cms/$name false
     done
 
     for cm in $(kubectl get cm --all-namespaces -l manual=true,prefix=bootstrap --no-headers -o custom-columns="NS:metadata.namespace,Name:metadata.name" | sed 's#\s\(.*\)\s#,#g'); do
         name=$(echo "$cm" | cut -f2 -d,)
         ns=$(echo "$cm" |  cut -f1 -d,)
         kubectl get cm -n $ns $name -o jsonpath="{.data['config\.yaml']}" > /var/tmp/cms/$name
-        ./entrypoint.sh /var/tmp/cms/$name true
+        /workspace/entrypoint.sh /var/tmp/cms/$name true
     done
 
     cp -fr /workspace/manifests/* /workspace/demo-manifests
