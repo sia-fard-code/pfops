@@ -88,8 +88,8 @@ data:
   script.sh: |
     #! /bin/sh
     set -e
-    git config --global user.email "sghalamifard@zscaker.com"
-    git config --global user.name "Siavash"
+    git config --global user.email "sia.gfard.code@gmail.com"
+    git config --global user.name "Sia Fard"
     cd /workspace/
     git clone -b main --single-branch git@github.com:sia-fard-code/demo-manifests.git
     git clone -b main --single-branch git@github.com:sia-fard-code/demo-metadata.git
