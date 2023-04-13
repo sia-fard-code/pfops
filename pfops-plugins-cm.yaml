@@ -24,6 +24,8 @@ data:
         find:
           command: [sh, -c, find . -name cm-generator.sh]
 
+---
+
 apiVersion: v1
 kind: Secret
 metadata:
