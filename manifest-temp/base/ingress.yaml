@@ -1,0 +1,27 @@
+#@ load("@ytt:data", "data")
+#@ for hook in dir(data.values.app.resources):
+  #@ for rsc in dir(data.values.app.resources[hook]):
+    #@ if rsc == "ingress":
+      #@ for ingress in data.values.app.resources[hook][rsc]:
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  #@ if hasattr(ingress, "annotations"):
+  annotations: #@ ingress.annotations
+  #@ end 
+  name: #@ ingress.name
+  #@ if data.values.app.override_na == "true":
+    #@ namespace = ingress.ns
+  #@ elif data.values.app.default_ns == "true":
+    #@ namespace = data.values.app.cluster + "-" + data.values.app.env
+  #@ else :
+    #@ namespace = data.values.app.cluster + "-" + data.values.app.env + "-" + ingress.ns
+  #@ end
+  namespace: #@ namespace
+spec:
+  rules: #@ ingress.rules
+      #@ end
+    #@ end
+  #@ end
+#@ end
