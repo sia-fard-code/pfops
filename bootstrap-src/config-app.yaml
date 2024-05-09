@@ -88,7 +88,6 @@ data:
   script.sh: |
     #! /bin/sh
     set -e
-    sleep 5000
     git config --global user.email "sia.gfard.code@gmail.com"
     git config --global user.name "Sia Fard"
     cd /workspace/
