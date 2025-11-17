@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: pfops
+  title: PFOps
+  description: Platform Operations repository
+  annotations:
+    github.com/project-slug: sia-fard-code/pfops
+    # Add these if applicable:
+    # sonarqube.org/project-key: pfops
+    # pagerduty.com/integration-key: <your-key>
+spec:
+  type: service  # Change to: library, infrastructure, etc. if more appropriate
+  lifecycle: experimental  # or: production, development, deprecated
+  owner: user:default/cmhxtwpwg002jr9011ji0nxsq  # You as the owner
+  # Optional: organize into a system
+  # system: platform-operations
